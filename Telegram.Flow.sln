@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F46EA392-DD61-4E33-896D-2E6EAA85D441}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DD1EC8C3-4A95-4694-B2CE-D27E5D9A753B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Flow", "src\Telegram.Flow\Telegram.Flow.csproj", "{3257F318-3F5B-486C-A33F-3954990803F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Flow.Tests", "tests\Telegram.Flow.Tests\Telegram.Flow.Tests.csproj", "{36D04736-78EA-46F0-B93E-87D9A24D8DBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3257F318-3F5B-486C-A33F-3954990803F4} = {F46EA392-DD61-4E33-896D-2E6EAA85D441}
+		{36D04736-78EA-46F0-B93E-87D9A24D8DBD} = {DD1EC8C3-4A95-4694-B2CE-D27E5D9A753B}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3257F318-3F5B-486C-A33F-3954990803F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3257F318-3F5B-486C-A33F-3954990803F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3257F318-3F5B-486C-A33F-3954990803F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3257F318-3F5B-486C-A33F-3954990803F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36D04736-78EA-46F0-B93E-87D9A24D8DBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36D04736-78EA-46F0-B93E-87D9A24D8DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36D04736-78EA-46F0-B93E-87D9A24D8DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36D04736-78EA-46F0-B93E-87D9A24D8DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
