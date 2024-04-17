@@ -14,7 +14,7 @@ internal static class EditedMessageUpdateHandlerBuilderExtensions
                 textEditedMessageUpdateHandlerBuilder.Build());
 
         return new EditedMessageUpdateHandler(
-            builder.TargetMessageTypes,
+            builder.TargetEditedMessageTypes,
             builder.ProcessingTasks,
             textEditedMessageUpdateHandlerBuilders);
     }
@@ -31,12 +31,12 @@ internal static class EditedMessageUpdateHandlerBuilderExtensions
             return new EditedMessageUpdateHandler<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
                 tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.TargetMessageTypes,
+                tInjectedBuilder.TargetEditedMessageTypes,
                 tInjectedBuilder.ProcessingTasks,
                 textEditedMessageUpdateHandlerBuilders);
 
         return new EditedMessageUpdateHandler(
-            builder.TargetMessageTypes,
+            builder.TargetEditedMessageTypes,
             builder.ProcessingTasks,
             textEditedMessageUpdateHandlerBuilders);
     }

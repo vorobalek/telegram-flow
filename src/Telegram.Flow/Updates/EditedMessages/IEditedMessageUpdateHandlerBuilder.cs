@@ -6,7 +6,7 @@ namespace Telegram.Flow.Updates.EditedMessages;
 
 public interface IEditedMessageUpdateHandlerBuilder : IAsyncProcessingBuilder<IEditedMessageUpdateHandlerContext>
 {
-    internal ISet<MessageType> TargetMessageTypes { get; }
+    internal ISet<MessageType> TargetEditedMessageTypes { get; }
 
     internal IList<ITextEditedMessageUpdateHandlerBuilder> TextEditedMessageUpdateHandlerBuilders { get; }
 }

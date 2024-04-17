@@ -13,7 +13,7 @@ public static class EditedMessageUpdateHandlerBuilderExtensions
         this IEditedMessageUpdateHandlerBuilder builder,
         Func<ITextEditedMessageUpdateHandlerBuilder, ITextEditedMessageUpdateHandlerBuilder>? action = null)
     {
-        builder.TargetMessageTypes.Add(MessageType.Text);
+        builder.TargetEditedMessageTypes.Add(MessageType.Text);
         ITextEditedMessageUpdateHandlerBuilder textEditedMessageUpdateHandlerBuilder = 
             new TextEditedMessageUpdateHandlerBuilder();
         if (action is not null)

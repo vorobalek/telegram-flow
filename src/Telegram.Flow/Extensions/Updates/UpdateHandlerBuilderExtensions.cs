@@ -99,7 +99,7 @@ public static class UpdateHandlerBuilderExtensions
         this IUpdateHandlerBuilder builder,
         Func<IEditedMessageUpdateHandlerBuilder, IEditedMessageUpdateHandlerBuilder>? action = null)
     {
-        builder.TargetUpdateTypes.Add(UpdateType.Message);
+        builder.TargetUpdateTypes.Add(UpdateType.EditedMessage);
         IEditedMessageUpdateHandlerBuilder editedMessageUpdateHandlerBuilder = new EditedMessageUpdateHandlerBuilder();
         if (action is not null)
             editedMessageUpdateHandlerBuilder = action(editedMessageUpdateHandlerBuilder);

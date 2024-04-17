@@ -7,7 +7,7 @@ namespace Telegram.Flow.Internals.Updates.EditedMessages;
 
 internal class EditedMessageUpdateHandlerBuilder : IEditedMessageUpdateHandlerBuilder
 {
-    public ISet<MessageType> TargetMessageTypes { get; protected init; } = new SortedSet<MessageType>();
+    public ISet<MessageType> TargetEditedMessageTypes { get; protected init; } = new SortedSet<MessageType>();
 
     public IList<ITextEditedMessageUpdateHandlerBuilder> TextEditedMessageUpdateHandlerBuilders { get; protected init; } =
         new List<ITextEditedMessageUpdateHandlerBuilder>();
@@ -22,7 +22,7 @@ internal class EditedMessageUpdateHandlerBuilder<TInjected> :
 {
     public EditedMessageUpdateHandlerBuilder(IEditedMessageUpdateHandlerBuilder prototypeBuilder)
     {
-        TargetMessageTypes = prototypeBuilder.TargetMessageTypes;
+        TargetEditedMessageTypes = prototypeBuilder.TargetEditedMessageTypes;
         TextEditedMessageUpdateHandlerBuilders = prototypeBuilder.TextEditedMessageUpdateHandlerBuilders;
         ProcessingTasks = prototypeBuilder.ProcessingTasks;
     }
