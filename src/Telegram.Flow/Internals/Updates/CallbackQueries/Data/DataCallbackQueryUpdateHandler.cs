@@ -14,9 +14,6 @@ internal class DataCallbackQueryUpdateHandler(
         if (targetData.Contains(context.Data) ||
             targetDataPrefixes.Any(targetPrefix => context.Data.StartsWith(targetPrefix)))
         {
-            await Task.WhenAll(processingDelegates.Select(processingDelegate =>
-                processingDelegate.Invoke(context, cancellationToken)));
-
             await ProcessInternalAsync(context, cancellationToken);
         }
     }

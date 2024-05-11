@@ -16,9 +16,6 @@ internal class BotCommandTextMessageUpdateHandler(
              targetPrefixes.Any(targetPrefix => context.Command.StartsWith(targetPrefix))) &&
             (context.IsLeading || allowInline))
         {
-            await Task.WhenAll(processingDelegates.Select(processingDelegate =>
-                processingDelegate.Invoke(context, cancellationToken)));
-
             await ProcessInternalAsync(context, cancellationToken);
         }
     }
