@@ -9,35 +9,35 @@ namespace Telegram.Flow.Extensions;
 
 public static class MessageUpdateHandlerBuilderExtensions
 {
-    public static IMessageUpdateHandlerBuilder ForText(
-        this IMessageUpdateHandlerBuilder builder,
-        Func<ITextMessageUpdateHandlerBuilder, ITextMessageUpdateHandlerBuilder>? action = null)
+    public static IMessageBuilder ForText(
+        this IMessageBuilder builder,
+        Func<ITextBuilder, ITextBuilder>? action = null)
     {
         builder.TargetMessageTypes.Add(MessageType.Text);
-        ITextMessageUpdateHandlerBuilder textMessageUpdateHandlerBuilder = 
-            new TextMessageUpdateHandlerBuilder();
+        ITextBuilder textBuilder = 
+            new TextBuilder();
         if (action is not null)
-            textMessageUpdateHandlerBuilder = action(textMessageUpdateHandlerBuilder);
-        builder.TextMessageUpdateHandlerBuilders.Add(textMessageUpdateHandlerBuilder);
+            textBuilder = action(textBuilder);
+        builder.TextBuilders.Add(textBuilder);
         return builder;
     }
     
-    public static IMessageUpdateHandlerBuilder<TInjected> WithInjection<TInjected>(
-        this IMessageUpdateHandlerBuilder builder)
+    public static IMessageBuilder<TInjected> WithInjection<TInjected>(
+        this IMessageBuilder builder)
     {
-        return new MessageUpdateHandlerBuilder<TInjected>(builder);
+        return new MessageBuilder<TInjected>(builder);
     }
 
-    public static IMessageUpdateHandlerBuilder WithAsyncProcessing(
-        this IMessageUpdateHandlerBuilder builder,
-        AsyncProcessingDelegate<IMessageUpdateHandlerContext> func)
+    public static IMessageBuilder WithAsyncProcessing(
+        this IMessageBuilder builder,
+        AsyncProcessingDelegate<IMessageContext> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
     
-    public static IMessageUpdateHandlerBuilder<TInjected> WithAsyncProcessing<TInjected>(
-        this IMessageUpdateHandlerBuilder<TInjected> builder,
-        AsyncProcessingDelegate<IMessageUpdateHandlerContext, TInjected> func)
+    public static IMessageBuilder<TInjected> WithAsyncProcessing<TInjected>(
+        this IMessageBuilder<TInjected> builder,
+        AsyncProcessingDelegate<IMessageContext, TInjected> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }

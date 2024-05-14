@@ -8,34 +8,34 @@ namespace Telegram.Flow.Extensions;
 
 public static class CallbackQueryUpdateHandlerBuilderExtensions
 {
-    public static ICallbackQueryUpdateHandlerBuilder ForData(
-        this ICallbackQueryUpdateHandlerBuilder builder,
-        Func<IDataCallbackQueryUpdateHandlerBuilder, IDataCallbackQueryUpdateHandlerBuilder>? action = null)
+    public static ICallbackQueryBuilder ForData(
+        this ICallbackQueryBuilder builder,
+        Func<IDataBuilder, IDataBuilder>? action = null)
     {
-        IDataCallbackQueryUpdateHandlerBuilder dataCallbackQueryUpdateHandlerBuilder = 
-            new DataCallbackQueryUpdateHandlerBuilder();
+        IDataBuilder dataBuilder = 
+            new DataBuilder();
         if (action is not null)
-            dataCallbackQueryUpdateHandlerBuilder = action(dataCallbackQueryUpdateHandlerBuilder);
-        builder.DataCallbackQueryUpdateHandlerBuilders.Add(dataCallbackQueryUpdateHandlerBuilder);
+            dataBuilder = action(dataBuilder);
+        builder.DataBuilders.Add(dataBuilder);
         return builder;
     }
     
-    public static ICallbackQueryUpdateHandlerBuilder<TInjected> WithInjection<TInjected>(
-        this ICallbackQueryUpdateHandlerBuilder builder)
+    public static ICallbackQueryBuilder<TInjected> WithInjection<TInjected>(
+        this ICallbackQueryBuilder builder)
     {
-        return new CallbackQueryUpdateHandlerBuilder<TInjected>(builder);
+        return new CallbackQueryBuilder<TInjected>(builder);
     }
 
-    public static ICallbackQueryUpdateHandlerBuilder WithAsyncProcessing(
-        this ICallbackQueryUpdateHandlerBuilder builder,
-        AsyncProcessingDelegate<ICallbackQueryUpdateHandlerContext> func)
+    public static ICallbackQueryBuilder WithAsyncProcessing(
+        this ICallbackQueryBuilder builder,
+        AsyncProcessingDelegate<ICallbackQueryContext> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
     
-    public static ICallbackQueryUpdateHandlerBuilder<TInjected> WithAsyncProcessing<TInjected>(
-        this ICallbackQueryUpdateHandlerBuilder<TInjected> builder,
-        AsyncProcessingDelegate<ICallbackQueryUpdateHandlerContext, TInjected> func)
+    public static ICallbackQueryBuilder<TInjected> WithAsyncProcessing<TInjected>(
+        this ICallbackQueryBuilder<TInjected> builder,
+        AsyncProcessingDelegate<ICallbackQueryContext, TInjected> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }

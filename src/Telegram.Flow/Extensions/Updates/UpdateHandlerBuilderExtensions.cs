@@ -15,126 +15,126 @@ namespace Telegram.Flow.Extensions;
 
 public static class UpdateHandlerBuilderExtensions
 {
-    public static IUpdateHandler Build(
-        this IUpdateHandlerBuilder builder)
+    public static IUpdateFlow Build(
+        this IUpdateBuilder builder)
     {
-        var messageUpdateHandlers =
-            builder.MessageUpdateHandlerBuilders.Select(messageUpdateHandlerBuilder =>
+        var messageFlows =
+            builder.MessageBuilders.Select(messageUpdateHandlerBuilder =>
                 messageUpdateHandlerBuilder.Build());
 
-        var callbackQueryUpdateHandlers =
-            builder.CallbackQueryUpdateHandlerBuilders.Select(callbackQueryUpdateHandlerBuilder =>
+        var callbackQueryFlows =
+            builder.CallbackQueryBuilders.Select(callbackQueryUpdateHandlerBuilder =>
                 callbackQueryUpdateHandlerBuilder.Build());
 
-        var editedMessageUpdateHandlers =
-            builder.EditedMessageUpdateHandlerBuilders.Select(editedMessageUpdateHandlerBuilder =>
+        var editedMessageFlows =
+            builder.EditedMessageBuilders.Select(editedMessageUpdateHandlerBuilder =>
                 editedMessageUpdateHandlerBuilder.Build());
         
-        return new UpdateHandler(
+        return new UpdateFlow(
             builder.TargetUpdateTypes,
-            builder.ProcessingTasks,
-            messageUpdateHandlers,
-            callbackQueryUpdateHandlers,
-            editedMessageUpdateHandlers,
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows,
+            builder.Tasks,
             builder.DisplayName);
     }
 
-    public static IUpdateHandler Build<TInjected>(
-        this IUpdateHandlerBuilder builder,
+    public static IUpdateFlow Build<TInjected>(
+        this IUpdateBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        var messageUpdateHandlers =
-            builder.MessageUpdateHandlerBuilders.Select(messageUpdateHandlerBuilder =>
+        var messageFlows =
+            builder.MessageBuilders.Select(messageUpdateHandlerBuilder =>
                 messageUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
 
-        var callbackQueryUpdateHandlers =
-            builder.CallbackQueryUpdateHandlerBuilders.Select(callbackQueryUpdateHandlerBuilder =>
+        var callbackQueryFlows =
+            builder.CallbackQueryBuilders.Select(callbackQueryUpdateHandlerBuilder =>
                 callbackQueryUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
 
-        var editedMessageUpdateHandlers =
-            builder.EditedMessageUpdateHandlerBuilders.Select(editedMessageUpdateHandlerBuilder =>
+        var editedMessageFlows =
+            builder.EditedMessageBuilders.Select(editedMessageUpdateHandlerBuilder =>
                 editedMessageUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
         
-        if (builder is IUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new UpdateHandler<TInjected>(
+        if (builder is IUpdateBuilder<TInjected> injectedBuilder)
+            return new UpdateFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.TargetUpdateTypes,
-                tInjectedBuilder.ProcessingTasks,
-                messageUpdateHandlers,
-                callbackQueryUpdateHandlers,
-                editedMessageUpdateHandlers,
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.TargetUpdateTypes,
+                messageFlows,
+                callbackQueryFlows,
+                editedMessageFlows,
+                injectedBuilder.Tasks,
                 builder.DisplayName);
         
-        return new UpdateHandler(
+        return new UpdateFlow(
             builder.TargetUpdateTypes,
-            builder.ProcessingTasks,
-            messageUpdateHandlers,
-            callbackQueryUpdateHandlers,
-            editedMessageUpdateHandlers,
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows,
+            builder.Tasks,
             builder.DisplayName);
     }
 
-    public static IUpdateHandlerBuilder WithDisplayName(
-        this IUpdateHandlerBuilder builder,
+    public static IUpdateBuilder WithDisplayName(
+        this IUpdateBuilder builder,
         string displayName)
     {
         builder.DisplayName = displayName;
         return builder;
     }
 
-    public static IUpdateHandlerBuilder ForMessage(
-        this IUpdateHandlerBuilder builder,
-        Func<IMessageUpdateHandlerBuilder, IMessageUpdateHandlerBuilder>? action = null)
+    public static IUpdateBuilder ForMessage(
+        this IUpdateBuilder builder,
+        Func<IMessageBuilder, IMessageBuilder>? action = null)
     {
         builder.TargetUpdateTypes.Add(UpdateType.Message);
-        IMessageUpdateHandlerBuilder messageUpdateHandlerBuilder = new MessageUpdateHandlerBuilder();
+        IMessageBuilder messageBuilder = new MessageBuilder();
         if (action is not null)
-            messageUpdateHandlerBuilder = action(messageUpdateHandlerBuilder);
-        builder.MessageUpdateHandlerBuilders.Add(messageUpdateHandlerBuilder);
+            messageBuilder = action(messageBuilder);
+        builder.MessageBuilders.Add(messageBuilder);
         return builder;
     }
 
-    public static IUpdateHandlerBuilder ForEditedMessage(
-        this IUpdateHandlerBuilder builder,
-        Func<IEditedMessageUpdateHandlerBuilder, IEditedMessageUpdateHandlerBuilder>? action = null)
+    public static IUpdateBuilder ForEditedMessage(
+        this IUpdateBuilder builder,
+        Func<IEditedMessageBuilder, IEditedMessageBuilder>? action = null)
     {
         builder.TargetUpdateTypes.Add(UpdateType.EditedMessage);
-        IEditedMessageUpdateHandlerBuilder editedMessageUpdateHandlerBuilder = new EditedMessageUpdateHandlerBuilder();
+        IEditedMessageBuilder editedMessageBuilder = new EditedMessageBuilder();
         if (action is not null)
-            editedMessageUpdateHandlerBuilder = action(editedMessageUpdateHandlerBuilder);
-        builder.EditedMessageUpdateHandlerBuilders.Add(editedMessageUpdateHandlerBuilder);
+            editedMessageBuilder = action(editedMessageBuilder);
+        builder.EditedMessageBuilders.Add(editedMessageBuilder);
         return builder;
     }
 
-    public static IUpdateHandlerBuilder ForCallbackQuery(
-        this IUpdateHandlerBuilder builder,
-        Func<ICallbackQueryUpdateHandlerBuilder, ICallbackQueryUpdateHandlerBuilder>? action = null)
+    public static IUpdateBuilder ForCallbackQuery(
+        this IUpdateBuilder builder,
+        Func<ICallbackQueryBuilder, ICallbackQueryBuilder>? action = null)
     {
         builder.TargetUpdateTypes.Add(UpdateType.CallbackQuery);
-        ICallbackQueryUpdateHandlerBuilder callbackQueryUpdateHandlerBuilder = new CallbackQueryUpdateHandlerBuilder();
+        ICallbackQueryBuilder callbackQueryBuilder = new CallbackQueryBuilder();
         if (action is not null)
-            callbackQueryUpdateHandlerBuilder = action(callbackQueryUpdateHandlerBuilder);
-        builder.CallbackQueryUpdateHandlerBuilders.Add(callbackQueryUpdateHandlerBuilder);
+            callbackQueryBuilder = action(callbackQueryBuilder);
+        builder.CallbackQueryBuilders.Add(callbackQueryBuilder);
         return builder;
     }
     
-    public static IUpdateHandlerBuilder<TInjected> WithInjection<TInjected>(
-        this IUpdateHandlerBuilder builder)
+    public static IUpdateBuilder<TInjected> WithInjection<TInjected>(
+        this IUpdateBuilder builder)
     {
-        return new UpdateHandlerBuilder<TInjected>(builder);
+        return new UpdateBuilder<TInjected>(builder);
     }
 
-    public static IUpdateHandlerBuilder WithAsyncProcessing(
-        this IUpdateHandlerBuilder builder,
-        AsyncProcessingDelegate<IUpdateHandlerContext> func)
+    public static IUpdateBuilder WithAsyncProcessing(
+        this IUpdateBuilder builder,
+        AsyncProcessingDelegate<IUpdateContext> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
     
-    public static IUpdateHandlerBuilder<TInjected> WithAsyncProcessing<TInjected>(
-        this IUpdateHandlerBuilder<TInjected> builder,
-        AsyncProcessingDelegate<IUpdateHandlerContext, TInjected> func)
+    public static IUpdateBuilder<TInjected> WithAsyncProcessing<TInjected>(
+        this IUpdateBuilder<TInjected> builder,
+        AsyncProcessingDelegate<IUpdateContext, TInjected> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }

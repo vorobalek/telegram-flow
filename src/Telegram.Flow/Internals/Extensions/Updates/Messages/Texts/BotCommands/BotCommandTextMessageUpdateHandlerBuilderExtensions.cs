@@ -6,28 +6,28 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class BotCommandTextMessageUpdateHandlerBuilderExtensions
 {
-    internal static IBotCommandTextMessageUpdateHandler Build(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder)
+    internal static IBotCommandFlow Build(
+        this IBotCommandBuilder builder)
     {
-        return new BotCommandTextMessageUpdateHandler(
+        return new BotCommandFlow(
             builder.AllowInline,
             builder.TargetCommands,
             builder.TargetCommandPrefixes,
-            builder.ProcessingTasks);
+            builder.Tasks);
     }
     
-    internal static IBotCommandTextMessageUpdateHandler Build<TInjected>(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder,
+    internal static IBotCommandFlow Build<TInjected>(
+        this IBotCommandBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        if (builder is IBotCommandTextMessageUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new BotCommandTextMessageUpdateHandler<TInjected>(
+        if (builder is IBotCommandBuilder<TInjected> injectedBuilder)
+            return new BotCommandFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.AllowInline,
-                tInjectedBuilder.TargetCommands,
-                tInjectedBuilder.TargetCommandPrefixes,
-                tInjectedBuilder.ProcessingTasks);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.AllowInline,
+                injectedBuilder.TargetCommands,
+                injectedBuilder.TargetCommandPrefixes,
+                injectedBuilder.Tasks);
 
         return builder.Build();
     }

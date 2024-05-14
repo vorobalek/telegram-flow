@@ -6,35 +6,35 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class TextMessageUpdateHandlerBuilderExtensions
 {
-    internal static ITextMessageUpdateHandler Build(
-        this ITextMessageUpdateHandlerBuilder builder)
+    internal static ITextFlow Build(
+        this ITextBuilder builder)
     {
-        var botCommandTextMessageUpdateHandlers = 
-            builder.BotCommandTextMessageUpdateHandlerBuilders.Select(botCommandTextMessageUpdateHandlerBuilder => 
-                botCommandTextMessageUpdateHandlerBuilder.Build());
+        var botCommandFlows = 
+            builder.BotCommandBuilders.Select(botCommandBuilder => 
+                botCommandBuilder.Build());
 
-        return new TextMessageUpdateHandler(
-            builder.ProcessingTasks,
-            botCommandTextMessageUpdateHandlers);
+        return new TextFlow(
+            botCommandFlows,
+            builder.Tasks);
     }
 
-    internal static ITextMessageUpdateHandler Build<TInjected>(
-        this ITextMessageUpdateHandlerBuilder builder,
+    internal static ITextFlow Build<TInjected>(
+        this ITextBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        var botCommandTextMessageUpdateHandlers = 
-            builder.BotCommandTextMessageUpdateHandlerBuilders.Select(botCommandTextMessageUpdateHandlerBuilder => 
-                botCommandTextMessageUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
+        var botCommandTextMessageFlows = 
+            builder.BotCommandBuilders.Select(botCommandBuilder => 
+                botCommandBuilder.Build<TInjected>(serviceProvider));
 
-        if (builder is ITextMessageUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new TextMessageUpdateHandler<TInjected>(
+        if (builder is ITextBuilder<TInjected> injectedBuilder)
+            return new TextFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.ProcessingTasks,
-                botCommandTextMessageUpdateHandlers);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.Tasks,
+                botCommandTextMessageFlows);
 
-        return new TextMessageUpdateHandler(
-            builder.ProcessingTasks,
-            botCommandTextMessageUpdateHandlers);
+        return new TextFlow(
+            botCommandTextMessageFlows,
+            builder.Tasks);
     }
 }

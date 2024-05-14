@@ -6,5 +6,5 @@ public delegate Task AsyncProcessingDelegate<in TContext>(
 
 public delegate Task AsyncProcessingDelegate<in TContext, in TInjected>(
     TContext context,
-    TInjected tInjected,
+    TInjected injected,
     CancellationToken cancellationToken);

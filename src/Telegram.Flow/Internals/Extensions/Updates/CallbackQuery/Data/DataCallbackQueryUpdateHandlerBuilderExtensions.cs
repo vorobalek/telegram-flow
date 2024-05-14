@@ -6,26 +6,26 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class DataCallbackQueryUpdateHandlerBuilderExtensions
 {
-    internal static IDataCallbackQueryUpdateHandler Build(
-        this IDataCallbackQueryUpdateHandlerBuilder builder)
+    internal static IDataFlow Build(
+        this IDataBuilder builder)
     {
-        return new DataCallbackQueryUpdateHandler(
+        return new DataFlow(
             builder.TargetData,
             builder.TargetDataPrefixes,
-            builder.ProcessingTasks);
+            builder.Tasks);
     }
     
-    internal static IDataCallbackQueryUpdateHandler Build<TInjected>(
-        this IDataCallbackQueryUpdateHandlerBuilder builder,
+    internal static IDataFlow Build<TInjected>(
+        this IDataBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        if (builder is IDataCallbackQueryUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new DataCallbackQueryUpdateHandler<TInjected>(
+        if (builder is IDataBuilder<TInjected> injectedBuilder)
+            return new DataFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.TargetData,
-                tInjectedBuilder.TargetDataPrefixes,
-                tInjectedBuilder.ProcessingTasks);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.TargetData,
+                injectedBuilder.TargetDataPrefixes,
+                injectedBuilder.Tasks);
 
         return builder.Build();
     }

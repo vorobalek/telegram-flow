@@ -6,46 +6,46 @@ namespace Telegram.Flow.Extensions;
 
 public static class BotCommandTextMessageUpdateHandlerBuilderExtensions
 {
-    public static IBotCommandTextMessageUpdateHandlerBuilder ForExact(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder,
+    public static IBotCommandBuilder ForExact(
+        this IBotCommandBuilder builder,
         string exactBotCommand)
     {
         builder.TargetCommands.Add(exactBotCommand);
         return builder;
     }
 
-    public static IBotCommandTextMessageUpdateHandlerBuilder ForPrefix(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder,
+    public static IBotCommandBuilder ForPrefix(
+        this IBotCommandBuilder builder,
         string botCommandPrefix)
     {
         builder.TargetCommandPrefixes.Add(botCommandPrefix);
         return builder;
     }
 
-    public static IBotCommandTextMessageUpdateHandlerBuilder AllowInline(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder,
+    public static IBotCommandBuilder AllowInline(
+        this IBotCommandBuilder builder,
         bool allowInline = true)
     {
         builder.AllowInline = allowInline;
         return builder;
     }
     
-    public static IBotCommandTextMessageUpdateHandlerBuilder<TInjected> WithInjection<TInjected>(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder)
+    public static IBotCommandBuilder<TInjected> WithInjection<TInjected>(
+        this IBotCommandBuilder builder)
     {
-        return new BotCommandTextMessageUpdateHandlerBuilder<TInjected>(builder);
+        return new BotCommandBuilder<TInjected>(builder);
     }
 
-    public static IBotCommandTextMessageUpdateHandlerBuilder WithAsyncProcessing(
-        this IBotCommandTextMessageUpdateHandlerBuilder builder,
-        AsyncProcessingDelegate<IBotCommandTextMessageUpdateHandlerContext> func)
+    public static IBotCommandBuilder WithAsyncProcessing(
+        this IBotCommandBuilder builder,
+        AsyncProcessingDelegate<IBotCommandContext> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
     
-    public static IBotCommandTextMessageUpdateHandlerBuilder<TInjected> WithAsyncProcessing<TInjected>(
-        this IBotCommandTextMessageUpdateHandlerBuilder<TInjected> builder,
-        AsyncProcessingDelegate<IBotCommandTextMessageUpdateHandlerContext, TInjected> func)
+    public static IBotCommandBuilder<TInjected> WithAsyncProcessing<TInjected>(
+        this IBotCommandBuilder<TInjected> builder,
+        AsyncProcessingDelegate<IBotCommandContext, TInjected> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }

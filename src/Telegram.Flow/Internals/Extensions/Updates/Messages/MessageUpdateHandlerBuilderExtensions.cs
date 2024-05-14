@@ -6,38 +6,38 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class MessageUpdateHandlerBuilderExtensions
 {
-    internal static IMessageUpdateHandler Build(
-        this IMessageUpdateHandlerBuilder builder)
+    internal static IMessageFlow Build(
+        this IMessageBuilder builder)
     {
-        var textMessageUpdateHandlerBuilders =
-            builder.TextMessageUpdateHandlerBuilders.Select(textMessageUpdateHandlerBuilder =>
+        var textBuilders =
+            builder.TextBuilders.Select(textMessageUpdateHandlerBuilder =>
                 textMessageUpdateHandlerBuilder.Build());
 
-        return new MessageUpdateHandler(
+        return new MessageFlow(
             builder.TargetMessageTypes,
-            builder.ProcessingTasks,
-            textMessageUpdateHandlerBuilders);
+            textBuilders,
+            builder.Tasks);
     }
 
-    internal static IMessageUpdateHandler Build<TInjected>(
-        this IMessageUpdateHandlerBuilder builder,
+    internal static IMessageFlow Build<TInjected>(
+        this IMessageBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        var textMessageUpdateHandlerBuilders =
-            builder.TextMessageUpdateHandlerBuilders.Select(textMessageUpdateHandlerBuilder =>
+        var textBuilders =
+            builder.TextBuilders.Select(textMessageUpdateHandlerBuilder =>
                 textMessageUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
 
-        if (builder is IMessageUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new MessageUpdateHandler<TInjected>(
+        if (builder is IMessageBuilder<TInjected> injectedBuilder)
+            return new MessageFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.TargetMessageTypes,
-                tInjectedBuilder.ProcessingTasks,
-                textMessageUpdateHandlerBuilders);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.TargetMessageTypes,
+                textBuilders,
+                injectedBuilder.Tasks);
 
-        return new MessageUpdateHandler(
+        return new MessageFlow(
             builder.TargetMessageTypes,
-            builder.ProcessingTasks,
-            textMessageUpdateHandlerBuilders);
+            textBuilders,
+            builder.Tasks);
     }
 }

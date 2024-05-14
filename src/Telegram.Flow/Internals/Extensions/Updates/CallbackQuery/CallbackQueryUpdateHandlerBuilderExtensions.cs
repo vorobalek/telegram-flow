@@ -6,35 +6,35 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class CallbackQueryUpdateHandlerBuilderExtensions
 {
-    internal static ICallbackQueryUpdateHandler Build(
-        this ICallbackQueryUpdateHandlerBuilder builder)
+    internal static ICallbackQueryFlow Build(
+        this ICallbackQueryBuilder builder)
     {
-        var dataCallbackQueryUpdateHandlers =
-            builder.DataCallbackQueryUpdateHandlerBuilders.Select(dataCallbackQueryUpdateHandlerBuilder =>
-                dataCallbackQueryUpdateHandlerBuilder.Build());
+        var dataFlows =
+            builder.DataBuilders.Select(dataBuilder =>
+                dataBuilder.Build());
 
-        return new CallbackQueryUpdateHandler(
-            builder.ProcessingTasks,
-            dataCallbackQueryUpdateHandlers);
+        return new CallbackQueryFlow(
+            dataFlows,
+            builder.Tasks);
     }
 
-    internal static ICallbackQueryUpdateHandler Build<TInjected>(
-        this ICallbackQueryUpdateHandlerBuilder builder,
+    internal static ICallbackQueryFlow Build<TInjected>(
+        this ICallbackQueryBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        var dataCallbackQueryUpdateHandlers =
-            builder.DataCallbackQueryUpdateHandlerBuilders.Select(dataCallbackQueryUpdateHandlerBuilder =>
-                dataCallbackQueryUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
+        var dataFlows =
+            builder.DataBuilders.Select(dataBuilder =>
+                dataBuilder.Build<TInjected>(serviceProvider));
 
-        if (builder is ICallbackQueryUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new CallbackQueryUpdateHandler<TInjected>(
+        if (builder is ICallbackQueryBuilder<TInjected> injectedBuilder)
+            return new CallbackQueryFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.ProcessingTasks,
-                dataCallbackQueryUpdateHandlers);
+                injectedBuilder.InjectedTasks,
+                dataFlows,
+                injectedBuilder.Tasks);
 
-        return new CallbackQueryUpdateHandler(
-            builder.ProcessingTasks,
-            dataCallbackQueryUpdateHandlers);
+        return new CallbackQueryFlow(
+            dataFlows,
+            builder.Tasks);
     }
 }

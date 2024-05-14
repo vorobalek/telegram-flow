@@ -6,24 +6,24 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class TextEditedMessageUpdateHandlerBuilderExtensions
 {
-    internal static ITextEditedMessageUpdateHandler Build(
-        this ITextEditedMessageUpdateHandlerBuilder builder)
+    internal static ITextFlow Build(
+        this ITextBuilder builder)
     {
-        return new TextEditedMessageUpdateHandler(
-            builder.ProcessingTasks);
+        return new TextFlow(
+            builder.Tasks);
     }
 
-    internal static ITextEditedMessageUpdateHandler Build<TInjected>(
-        this ITextEditedMessageUpdateHandlerBuilder builder,
+    internal static ITextFlow Build<TInjected>(
+        this ITextBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        if (builder is ITextEditedMessageUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new TextEditedMessageUpdateHandler<TInjected>(
+        if (builder is ITextBuilder<TInjected> injectedBuilder)
+            return new TextFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.ProcessingTasks);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.Tasks);
 
-        return new TextEditedMessageUpdateHandler(
-            builder.ProcessingTasks);
+        return new TextFlow(
+            builder.Tasks);
     }
 }

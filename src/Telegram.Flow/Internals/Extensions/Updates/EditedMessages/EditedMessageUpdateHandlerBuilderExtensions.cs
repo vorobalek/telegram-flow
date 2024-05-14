@@ -6,38 +6,38 @@ namespace Telegram.Flow.Internals.Extensions;
 
 internal static class EditedMessageUpdateHandlerBuilderExtensions
 {
-    internal static IEditedMessageUpdateHandler Build(
-        this IEditedMessageUpdateHandlerBuilder builder)
+    internal static IEditedMessageFlow Build(
+        this IEditedMessageBuilder builder)
     {
-        var textEditedMessageUpdateHandlerBuilders =
-            builder.TextEditedMessageUpdateHandlerBuilders.Select(textEditedMessageUpdateHandlerBuilder =>
-                textEditedMessageUpdateHandlerBuilder.Build());
+        var textFlows =
+            builder.TextBuilders.Select(textBuilder =>
+                textBuilder.Build());
 
-        return new EditedMessageUpdateHandler(
-            builder.TargetEditedMessageTypes,
-            builder.ProcessingTasks,
-            textEditedMessageUpdateHandlerBuilders);
+        return new EditedMessageFlow(
+            builder.TargetTypes,
+            textFlows,
+            builder.Tasks);
     }
 
-    internal static IEditedMessageUpdateHandler Build<TInjected>(
-        this IEditedMessageUpdateHandlerBuilder builder,
+    internal static IEditedMessageFlow Build<TInjected>(
+        this IEditedMessageBuilder builder,
         IServiceProvider serviceProvider) where TInjected : notnull
     {
-        var textEditedMessageUpdateHandlerBuilders =
-            builder.TextEditedMessageUpdateHandlerBuilders.Select(textEditedMessageUpdateHandlerBuilder =>
-                textEditedMessageUpdateHandlerBuilder.Build<TInjected>(serviceProvider));
+        var textFlows =
+            builder.TextBuilders.Select(textBuilder =>
+                textBuilder.Build<TInjected>(serviceProvider));
 
-        if (builder is IEditedMessageUpdateHandlerBuilder<TInjected> tInjectedBuilder)
-            return new EditedMessageUpdateHandler<TInjected>(
+        if (builder is IEditedMessageBuilder<TInjected> injectedBuilder)
+            return new EditedMessageFlow<TInjected>(
                 serviceProvider.GetRequiredService<TInjected>(),
-                tInjectedBuilder.InjectedProcessingTasks,
-                tInjectedBuilder.TargetEditedMessageTypes,
-                tInjectedBuilder.ProcessingTasks,
-                textEditedMessageUpdateHandlerBuilders);
+                injectedBuilder.InjectedTasks,
+                injectedBuilder.TargetTypes,
+                injectedBuilder.Tasks,
+                textFlows);
 
-        return new EditedMessageUpdateHandler(
-            builder.TargetEditedMessageTypes,
-            builder.ProcessingTasks,
-            textEditedMessageUpdateHandlerBuilders);
+        return new EditedMessageFlow(
+            builder.TargetTypes,
+            textFlows,
+            builder.Tasks);
     }
 }
