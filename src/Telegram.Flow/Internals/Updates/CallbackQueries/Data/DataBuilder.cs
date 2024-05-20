@@ -1,16 +1,14 @@
 using Telegram.Flow.Infrastructure;
+using Telegram.Flow.Infrastructure.Internals;
 using Telegram.Flow.Updates.CallbackQueries.Data;
 
 namespace Telegram.Flow.Internals.Updates.CallbackQueries.Data;
 
-internal class DataBuilder : IDataBuilder
+internal class DataBuilder : Builder<IDataContext>, IDataBuilder
 {
     public ISet<string> TargetData { get; protected init; } = new SortedSet<string>();
 
     public ISet<string> TargetDataPrefixes { get; protected init; } = new SortedSet<string>();
-
-    public IList<AsyncProcessingDelegate<IDataContext>> Tasks { get; protected init; } =
-        new List<AsyncProcessingDelegate<IDataContext>>();
 }
 
 internal class DataBuilder<TInjected> :
@@ -24,6 +22,6 @@ internal class DataBuilder<TInjected> :
         Tasks = prototypeBuilder.Tasks;
     }
     
-    public IList<AsyncProcessingDelegate<IDataContext, TInjected>> InjectedTasks { get; } =
+    public ICollection<AsyncProcessingDelegate<IDataContext, TInjected>> InjectedTasks { get; } =
         new List<AsyncProcessingDelegate<IDataContext, TInjected>>();
 }

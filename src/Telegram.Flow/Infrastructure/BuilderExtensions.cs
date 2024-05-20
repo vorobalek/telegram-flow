@@ -6,6 +6,7 @@ internal static class BuilderExtensions
         this TBuilder builder,
         AsyncProcessingDelegate<TContext> func)
         where TBuilder : IBuilder<TContext>
+        where TContext : IContext
     {
         builder.Tasks.Add(func);
         return builder;
@@ -15,6 +16,7 @@ internal static class BuilderExtensions
         this TBuilder builder,
         AsyncProcessingDelegate<TContext, TInjected> func)
         where TBuilder : IBuilder<TContext, TInjected>
+        where TContext : IContext
     {
         builder.InjectedTasks.Add(func);
         return builder;

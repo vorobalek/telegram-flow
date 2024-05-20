@@ -8,7 +8,7 @@ public interface IEditedMessageBuilder : IBuilder<IEditedMessageContext>
 {
     internal ISet<MessageType> TargetTypes { get; }
 
-    internal IList<ITextBuilder> TextBuilders { get; }
+    internal ICollection<ITextBuilder> TextBuilders { get; }
 }
 
 public interface IEditedMessageBuilder<TInjected> :

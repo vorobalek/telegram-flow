@@ -1,13 +1,10 @@
 using Telegram.Flow.Infrastructure;
+using Telegram.Flow.Infrastructure.Internals;
 using Telegram.Flow.Updates.EditedMessages.Texts;
 
 namespace Telegram.Flow.Internals.Updates.EditedMessages.Texts;
 
-internal class TextBuilder : ITextBuilder
-{
-    public IList<AsyncProcessingDelegate<ITextContext>> Tasks { get; protected init; } =
-        new List<AsyncProcessingDelegate<ITextContext>>();
-}
+internal class TextBuilder : Builder<ITextContext>, ITextBuilder;
 
 internal class TextBuilder<TInjected> :
     TextBuilder,
@@ -18,6 +15,6 @@ internal class TextBuilder<TInjected> :
         Tasks = prototypeBuilder.Tasks;
     }
     
-    public IList<AsyncProcessingDelegate<ITextContext, TInjected>> InjectedTasks { get; } =
+    public ICollection<AsyncProcessingDelegate<ITextContext, TInjected>> InjectedTasks { get; } =
         new List<AsyncProcessingDelegate<ITextContext, TInjected>>();
 }

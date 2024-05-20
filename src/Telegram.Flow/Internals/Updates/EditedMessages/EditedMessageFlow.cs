@@ -51,7 +51,7 @@ internal class EditedMessageFlow<TInjected>(
         CancellationToken cancellationToken)
     {
         await base.ProcessInternalAsync(context, cancellationToken);
-        await Task.WhenAll(injectedTasks.Select(processingDelegate =>
-            processingDelegate.Invoke(context, injected, cancellationToken)));
+        await Task.WhenAll(injectedTasks.Select(task =>
+            task.Invoke(context, injected, cancellationToken)));
     }
 }

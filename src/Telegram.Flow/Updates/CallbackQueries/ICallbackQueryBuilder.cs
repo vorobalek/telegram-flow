@@ -5,7 +5,7 @@ namespace Telegram.Flow.Updates.CallbackQueries;
 
 public interface ICallbackQueryBuilder : IBuilder<ICallbackQueryContext>
 {
-    IList<IDataBuilder> DataBuilders { get; }
+    ICollection<IDataBuilder> DataBuilders { get; }
 }
 
 public interface ICallbackQueryBuilder<TInjected> :

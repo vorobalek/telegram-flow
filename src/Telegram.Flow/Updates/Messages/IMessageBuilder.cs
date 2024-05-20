@@ -8,7 +8,7 @@ public interface IMessageBuilder : IBuilder<IMessageContext>
 {
     ISet<MessageType> TargetMessageTypes { get; }
 
-    IList<ITextBuilder> TextBuilders { get; }
+    ICollection<ITextBuilder> TextBuilders { get; }
 }
 
 public interface IMessageBuilder<TInjected> :

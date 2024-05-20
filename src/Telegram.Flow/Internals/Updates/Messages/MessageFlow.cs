@@ -7,7 +7,7 @@ namespace Telegram.Flow.Internals.Updates.Messages;
 
 internal class MessageFlow(
     ICollection<MessageType> targetTypes,
-    IEnumerable<ITextFlow> textMessageFlows,
+    IEnumerable<ITextFlow> textFlows,
     IEnumerable<AsyncProcessingDelegate<IMessageContext>> tasks) : 
     Flow<IMessageContext>(tasks),
     IMessageFlow
@@ -19,7 +19,7 @@ internal class MessageFlow(
         switch (context.Message.Type)
         {
             case MessageType.Text when context.Message is { Text: not null }:
-                await Task.WhenAll(textMessageFlows.Select(flow =>
+                await Task.WhenAll(textFlows.Select(flow =>
                     flow.ProcessAsync(
                         new TextContext(
                             context.Update,
@@ -39,11 +39,11 @@ internal class MessageFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<IMessageContext, TInjected>> injectedTasks,
     ICollection<MessageType> targetTypes,
-    IEnumerable<ITextFlow> textMessageFlows,
+    IEnumerable<ITextFlow> textFlows,
     IEnumerable<AsyncProcessingDelegate<IMessageContext>> tasks) :
     MessageFlow(
         targetTypes,
-        textMessageFlows,
+        textFlows,
         tasks),
     IMessageFlow<TInjected>
 {
@@ -51,7 +51,7 @@ internal class MessageFlow<TInjected>(
         CancellationToken cancellationToken)
     {
         await base.ProcessInternalAsync(context, cancellationToken);
-        await Task.WhenAll(injectedTasks.Select(processingDelegate =>
-            processingDelegate.Invoke(context, injected, cancellationToken)));
+        await Task.WhenAll(injectedTasks.Select(task =>
+            task.Invoke(context, injected, cancellationToken)));
     }
 }

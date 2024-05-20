@@ -28,20 +28,20 @@ internal class UpdateFlow(
         switch (context.Update.Type)
         {
             case UpdateType.Message when context.Update is { Message: not null }:
-                await Task.WhenAll(messageFlows.Select(handler =>
-                    handler.ProcessAsync(
+                await Task.WhenAll(messageFlows.Select(flow =>
+                    flow.ProcessAsync(
                         new MessageContext(context.Update, context.Update.Message),
                         cancellationToken)));
                 break;
             case UpdateType.CallbackQuery when context.Update is {CallbackQuery: not null}:
-                await Task.WhenAll(callbackQueryFlows.Select(handler =>
-                    handler.ProcessAsync(
+                await Task.WhenAll(callbackQueryFlows.Select(flow =>
+                    flow.ProcessAsync(
                         new CallbackQueryContext(context.Update, context.Update.CallbackQuery),
                         cancellationToken)));
                 break;
             case UpdateType.EditedMessage when context.Update is { EditedMessage: not null }:
-                await Task.WhenAll(editedMessageFlows.Select(handler =>
-                    handler.ProcessAsync(
+                await Task.WhenAll(editedMessageFlows.Select(flow =>
+                    flow.ProcessAsync(
                         new EditedMessageContext(context.Update, context.Update.EditedMessage),
                         cancellationToken)));
                 break;
@@ -75,7 +75,7 @@ internal class UpdateFlow<TInjected>(
         CancellationToken cancellationToken)
     {
         await base.ProcessInternalAsync(context, cancellationToken);
-        await Task.WhenAll(injectedTasks.Select(processingDelegate =>
-            processingDelegate.Invoke(context, injected, cancellationToken)));
+        await Task.WhenAll(injectedTasks.Select(task =>
+            task.Invoke(context, injected, cancellationToken)));
     }
 }

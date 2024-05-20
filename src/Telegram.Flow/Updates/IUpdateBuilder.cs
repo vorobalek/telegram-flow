@@ -12,9 +12,9 @@ public interface IUpdateBuilder :
     internal string? DisplayName { get; set; }
     internal ISet<UpdateType> TargetUpdateTypes { get; }
     
-    internal IList<IMessageBuilder> MessageBuilders { get; }
-    internal IList<ICallbackQueryBuilder> CallbackQueryBuilders { get; }
-    internal IList<IEditedMessageBuilder> EditedMessageBuilders { get; }
+    internal ICollection<IMessageBuilder> MessageBuilders { get; }
+    internal ICollection<ICallbackQueryBuilder> CallbackQueryBuilders { get; }
+    internal ICollection<IEditedMessageBuilder> EditedMessageBuilders { get; }
 }
 
 public interface IUpdateBuilder<TInjected> : 

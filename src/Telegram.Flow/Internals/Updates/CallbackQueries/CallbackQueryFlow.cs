@@ -13,8 +13,8 @@ internal class CallbackQueryFlow(
     public override async Task ProcessAsync(ICallbackQueryContext context, CancellationToken cancellationToken)
     {
         if (context.CallbackQuery.Data is { } callbackQueryData)
-            await Task.WhenAll(dataFlows.Select(dataFlow =>
-                dataFlow.ProcessAsync(
+            await Task.WhenAll(dataFlows.Select(flow =>
+                flow.ProcessAsync(
                     new DataContext(
                         context.Update,
                         context.CallbackQuery,
@@ -39,7 +39,7 @@ internal class CallbackQueryFlow<TInjected>(
         CancellationToken cancellationToken)
     {
         await base.ProcessInternalAsync(context, cancellationToken);
-        await Task.WhenAll(injectedTasks.Select(processingDelegate =>
-            processingDelegate.Invoke(context, injected, cancellationToken)));
+        await Task.WhenAll(injectedTasks.Select(task =>
+            task.Invoke(context, injected, cancellationToken)));
     }
 }

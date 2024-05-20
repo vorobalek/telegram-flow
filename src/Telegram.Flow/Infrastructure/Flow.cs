@@ -12,7 +12,7 @@ public abstract class Flow<TContext>(
     
     protected virtual async Task ProcessInternalAsync(TContext context, CancellationToken cancellationToken)
     {
-        await Task.WhenAll(tasks.Select(processingDelegate =>
-            processingDelegate.Invoke(context, cancellationToken)));
+        await Task.WhenAll(tasks.Select(task =>
+            task.Invoke(context, cancellationToken)));
     }
 }

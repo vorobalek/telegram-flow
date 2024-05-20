@@ -1,19 +1,17 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Flow.Infrastructure;
+using Telegram.Flow.Infrastructure.Internals;
 using Telegram.Flow.Updates.EditedMessages;
 using Telegram.Flow.Updates.EditedMessages.Texts;
 
 namespace Telegram.Flow.Internals.Updates.EditedMessages;
 
-internal class EditedMessageBuilder : IEditedMessageBuilder
+internal class EditedMessageBuilder : Builder<IEditedMessageContext>, IEditedMessageBuilder
 {
     public ISet<MessageType> TargetTypes { get; protected init; } = new SortedSet<MessageType>();
 
-    public IList<ITextBuilder> TextBuilders { get; protected init; } =
+    public ICollection<ITextBuilder> TextBuilders { get; protected init; } =
         new List<ITextBuilder>();
-
-    public IList<AsyncProcessingDelegate<IEditedMessageContext>> Tasks { get; protected init; } =
-        new List<AsyncProcessingDelegate<IEditedMessageContext>>();
 }
 
 internal class EditedMessageBuilder<TInjected> :
@@ -27,6 +25,6 @@ internal class EditedMessageBuilder<TInjected> :
         Tasks = prototypeBuilder.Tasks;
     }
     
-    public IList<AsyncProcessingDelegate<IEditedMessageContext, TInjected>> InjectedTasks { get; } =
+    public ICollection<AsyncProcessingDelegate<IEditedMessageContext, TInjected>> InjectedTasks { get; } =
         new List<AsyncProcessingDelegate<IEditedMessageContext, TInjected>>();
 }

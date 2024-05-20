@@ -1,5 +1,6 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Flow.Infrastructure;
+using Telegram.Flow.Infrastructure.Internals;
 using Telegram.Flow.Updates;
 using Telegram.Flow.Updates.CallbackQueries;
 using Telegram.Flow.Updates.EditedMessages;
@@ -7,23 +8,20 @@ using Telegram.Flow.Updates.Messages;
 
 namespace Telegram.Flow.Internals.Updates;
 
-internal class UpdateBuilder : IUpdateBuilder
+internal class UpdateBuilder : Builder<IUpdateContext>, IUpdateBuilder
 {
     public string? DisplayName { get; set; }
 
     public ISet<UpdateType> TargetUpdateTypes { get; protected init; } = new SortedSet<UpdateType>();
 
-    public IList<IMessageBuilder> MessageBuilders { get; protected init; } =
+    public ICollection<IMessageBuilder> MessageBuilders { get; protected init; } =
         new List<IMessageBuilder>();
 
-    public IList<ICallbackQueryBuilder> CallbackQueryBuilders { get; protected init; } =
+    public ICollection<ICallbackQueryBuilder> CallbackQueryBuilders { get; protected init; } =
         new List<ICallbackQueryBuilder>();
 
-    public IList<IEditedMessageBuilder> EditedMessageBuilders { get; protected init; } =
+    public ICollection<IEditedMessageBuilder> EditedMessageBuilders { get; protected init; } =
         new List<IEditedMessageBuilder>();
-
-    public IList<AsyncProcessingDelegate<IUpdateContext>> Tasks { get; protected init; } =
-        new List<AsyncProcessingDelegate<IUpdateContext>>();
 }
 
 internal class UpdateBuilder<TInjected> : UpdateBuilder, IUpdateBuilder<TInjected>
@@ -38,6 +36,6 @@ internal class UpdateBuilder<TInjected> : UpdateBuilder, IUpdateBuilder<TInjecte
         Tasks = prototypeBuilder.Tasks;
     }
 
-    public IList<AsyncProcessingDelegate<IUpdateContext, TInjected>> InjectedTasks { get; } =
+    public ICollection<AsyncProcessingDelegate<IUpdateContext, TInjected>> InjectedTasks { get; } =
         new List<AsyncProcessingDelegate<IUpdateContext, TInjected>>();
 }
