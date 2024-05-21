@@ -2,15 +2,15 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Flow.Infrastructure;
 using Telegram.Flow.Internals.Updates.EditedMessages.Texts;
 using Telegram.Flow.Updates.EditedMessages;
+using Telegram.Flow.Updates.EditedMessages.Texts;
 
 namespace Telegram.Flow.Internals.Updates.EditedMessages;
 
 internal class EditedMessageFlow(
     ICollection<MessageType> targetTypes,
-    IEnumerable<ITextFlow> textFlows,
+    IEnumerable<IFlow<ITextContext>> textFlows,
     IEnumerable<AsyncProcessingDelegate<IEditedMessageContext>> tasks) :
-    Flow<IEditedMessageContext>(tasks),
-    IEditedMessageFlow
+    Flow<IEditedMessageContext>(tasks)
 {
     public override async Task ProcessAsync(IEditedMessageContext context, CancellationToken cancellationToken)
     {
@@ -35,17 +35,16 @@ internal class EditedMessageFlow(
     }
 }
 
-internal class EditedMessageFlow<TInjected>(
+internal sealed class EditedMessageFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<IEditedMessageContext, TInjected>> injectedTasks,
     ICollection<MessageType> targetTypes,
-    IEnumerable<AsyncProcessingDelegate<IEditedMessageContext>> tasks,
-    IEnumerable<ITextFlow> textFlows) :
+    IEnumerable<IFlow<ITextContext>> textFlows,
+    IEnumerable<AsyncProcessingDelegate<IEditedMessageContext>> tasks) :
     EditedMessageFlow(
         targetTypes,
         textFlows,
-        tasks),
-    IEditedMessageFlow<TInjected>
+        tasks)
 {
     protected override async Task ProcessInternalAsync(IEditedMessageContext context,
         CancellationToken cancellationToken)

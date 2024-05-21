@@ -7,30 +7,26 @@ internal class BotCommandFlow(
     bool allowInline,
     ISet<string> targetCommands,
     ISet<string> targetPrefixes,
-    IEnumerable<AsyncProcessingDelegate<IBotCommandContext>> tasks) : 
-    Flow<IBotCommandContext>(tasks),
-    IBotCommandFlow
+    IEnumerable<AsyncProcessingDelegate<IBotCommandContext>> tasks) :
+    Flow<IBotCommandContext>(tasks)
 {
     public override async Task ProcessAsync(IBotCommandContext context, CancellationToken cancellationToken)
     {
         if ((targetCommands.Contains(context.Command) ||
              targetPrefixes.Any(targetPrefix => context.Command.StartsWith(targetPrefix))) &&
             (context.IsLeading || allowInline))
-        {
             await base.ProcessAsync(context, cancellationToken);
-        }
     }
 }
 
-internal class BotCommandFlow<TInjected>(
+internal sealed class BotCommandFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<IBotCommandContext, TInjected>> injectedTasks,
     bool allowInline,
     ISet<string> targetCommands,
     ISet<string> targetPrefixes,
-    IEnumerable<AsyncProcessingDelegate<IBotCommandContext>> tasks) : 
-    BotCommandFlow(allowInline, targetCommands, targetPrefixes, tasks),
-    IBotCommandFlow<TInjected>
+    IEnumerable<AsyncProcessingDelegate<IBotCommandContext>> tasks) :
+    BotCommandFlow(allowInline, targetCommands, targetPrefixes, tasks)
 {
     protected override async Task ProcessInternalAsync(IBotCommandContext context, CancellationToken cancellationToken)
     {

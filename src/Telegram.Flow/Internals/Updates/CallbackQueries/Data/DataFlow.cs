@@ -7,16 +7,13 @@ internal class DataFlow(
     ISet<string> targetData,
     ISet<string> targetDataPrefixes,
     IEnumerable<AsyncProcessingDelegate<IDataContext>> tasks) :
-    Flow<IDataContext>(tasks),
-    IDataFlow
+    Flow<IDataContext>(tasks)
 {
     public override async Task ProcessAsync(IDataContext context, CancellationToken cancellationToken)
     {
         if (targetData.Contains(context.Data) ||
             targetDataPrefixes.Any(targetPrefix => context.Data.StartsWith(targetPrefix)))
-        {
             await base.ProcessAsync(context, cancellationToken);
-        }
     }
 }
 
@@ -29,8 +26,7 @@ internal class DataFlow<TInjected>(
     DataFlow(
         targetData,
         targetDataPrefixes,
-        tasks),
-    IDataFlow<TInjected>
+        tasks)
 {
     protected override async Task ProcessInternalAsync(IDataContext context, CancellationToken cancellationToken)
     {

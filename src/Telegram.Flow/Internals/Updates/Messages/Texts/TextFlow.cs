@@ -2,14 +2,14 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Flow.Infrastructure;
 using Telegram.Flow.Internals.Updates.Messages.Texts.BotCommands;
 using Telegram.Flow.Updates.Messages.Texts;
+using Telegram.Flow.Updates.Messages.Texts.BotCommands;
 
 namespace Telegram.Flow.Internals.Updates.Messages.Texts;
 
 internal class TextFlow(
-    IEnumerable<IBotCommandFlow> botCommandFlows,
+    IEnumerable<IFlow<IBotCommandContext>> botCommandFlows,
     IEnumerable<AsyncProcessingDelegate<ITextContext>> tasks) :
-    Flow<ITextContext>(tasks),
-    ITextFlow
+    Flow<ITextContext>(tasks)
 {
     public override async Task ProcessAsync(ITextContext context, CancellationToken cancellationToken)
     {
@@ -45,15 +45,14 @@ internal class TextFlow(
     }
 }
 
-internal class TextFlow<TInjected>(
+internal sealed class TextFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<ITextContext, TInjected>> injectedTasks,
-    IEnumerable<AsyncProcessingDelegate<ITextContext>> tasks,
-    IEnumerable<IBotCommandFlow> botCommandFlows) :
+    IEnumerable<IFlow<IBotCommandContext>> botCommandFlows,
+    IEnumerable<AsyncProcessingDelegate<ITextContext>> tasks) :
     TextFlow(
         botCommandFlows,
-        tasks),
-    ITextFlow<TInjected>
+        tasks)
 {
     protected override async Task ProcessInternalAsync(ITextContext context, CancellationToken cancellationToken)
     {

@@ -1,7 +1,7 @@
 namespace Telegram.Flow.Infrastructure;
 
 public abstract class Flow<TContext>(
-    IEnumerable<AsyncProcessingDelegate<TContext>> tasks) : 
+    IEnumerable<AsyncProcessingDelegate<TContext>> tasks) :
     IFlow<TContext>
     where TContext : IContext
 {
@@ -9,7 +9,7 @@ public abstract class Flow<TContext>(
     {
         await ProcessInternalAsync(context, cancellationToken);
     }
-    
+
     protected virtual async Task ProcessInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         await Task.WhenAll(tasks.Select(task =>

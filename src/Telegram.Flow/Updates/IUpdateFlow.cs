@@ -1,10 +1,11 @@
+using Telegram.Bot.Types;
 using Telegram.Flow.Infrastructure;
 
 namespace Telegram.Flow.Updates;
 
 public interface IUpdateFlow : IFlow<IUpdateContext>
 {
-    string? DisplayName { get; }
-}
+    public string? DisplayName { get; }
 
-public interface IUpdateFlow<TInjected> : IUpdateFlow;
+    Task ProcessAsync(Update update, CancellationToken cancellationToken);
+}

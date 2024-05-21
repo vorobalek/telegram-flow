@@ -1,14 +1,14 @@
 using Telegram.Flow.Infrastructure;
 using Telegram.Flow.Internals.Updates.CallbackQueries.Data;
 using Telegram.Flow.Updates.CallbackQueries;
+using Telegram.Flow.Updates.CallbackQueries.Data;
 
 namespace Telegram.Flow.Internals.Updates.CallbackQueries;
 
 internal class CallbackQueryFlow(
-    IEnumerable<IDataFlow> dataFlows,
+    IEnumerable<IFlow<IDataContext>> dataFlows,
     IEnumerable<AsyncProcessingDelegate<ICallbackQueryContext>> tasks) :
-    Flow<ICallbackQueryContext>(tasks),
-    ICallbackQueryFlow
+    Flow<ICallbackQueryContext>(tasks)
 {
     public override async Task ProcessAsync(ICallbackQueryContext context, CancellationToken cancellationToken)
     {
@@ -20,20 +20,19 @@ internal class CallbackQueryFlow(
                         context.CallbackQuery,
                         callbackQueryData),
                     cancellationToken)));
-        
+
         await base.ProcessAsync(context, cancellationToken);
     }
 }
 
-internal class CallbackQueryFlow<TInjected>(
+internal sealed class CallbackQueryFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<ICallbackQueryContext, TInjected>> injectedTasks,
-    IEnumerable<IDataFlow> dataCallbackQueryFlows,
+    IEnumerable<IFlow<IDataContext>> dataCallbackQueryFlows,
     IEnumerable<AsyncProcessingDelegate<ICallbackQueryContext>> tasks) :
     CallbackQueryFlow(
         dataCallbackQueryFlows,
-        tasks),
-    ICallbackQueryFlow<TInjected>
+        tasks)
 {
     protected override async Task ProcessInternalAsync(ICallbackQueryContext context,
         CancellationToken cancellationToken)

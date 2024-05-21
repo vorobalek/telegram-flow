@@ -6,17 +6,21 @@ using Telegram.Flow.Updates.Messages;
 
 namespace Telegram.Flow.Updates;
 
-public interface IUpdateBuilder : 
+public interface IUpdateBuilder :
     IBuilder<IUpdateContext>
 {
     internal string? DisplayName { get; set; }
     internal ISet<UpdateType> TargetUpdateTypes { get; }
-    
+
     internal ICollection<IMessageBuilder> MessageBuilders { get; }
     internal ICollection<ICallbackQueryBuilder> CallbackQueryBuilders { get; }
     internal ICollection<IEditedMessageBuilder> EditedMessageBuilders { get; }
+
+    public IUpdateBuilder<TInjected> WithInjection<TInjected>(TInjected injected);
+
+    new IUpdateFlow Build();
 }
 
-public interface IUpdateBuilder<TInjected> : 
-    IUpdateBuilder, 
+public interface IUpdateBuilder<TInjected> :
+    IUpdateBuilder,
     IBuilder<IUpdateContext, TInjected>;

@@ -1,75 +1,83 @@
 using System.Diagnostics;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Flow.Infrastructure;
 using Telegram.Flow.Internals.Updates.CallbackQueries;
 using Telegram.Flow.Internals.Updates.EditedMessages;
 using Telegram.Flow.Internals.Updates.Messages;
 using Telegram.Flow.Updates;
+using Telegram.Flow.Updates.CallbackQueries;
+using Telegram.Flow.Updates.EditedMessages;
+using Telegram.Flow.Updates.Messages;
 
 namespace Telegram.Flow.Internals.Updates;
 
 [DebuggerDisplay("{DisplayName}")]
 internal class UpdateFlow(
     ICollection<UpdateType> targetTypes,
-    IEnumerable<IMessageFlow> messageFlows,
-    IEnumerable<ICallbackQueryFlow> callbackQueryFlows,
-    IEnumerable<IEditedMessageFlow> editedMessageFlows,
+    IEnumerable<IFlow<IMessageContext>> messageFlows,
+    IEnumerable<IFlow<ICallbackQueryContext>> callbackQueryFlows,
+    IEnumerable<IFlow<IEditedMessageContext>> editedMessageFlows,
     IEnumerable<AsyncProcessingDelegate<IUpdateContext>> tasks,
-    string? displayName = null) : 
+    string? displayName = null) :
     Flow<IUpdateContext>(tasks),
     IUpdateFlow
 {
     public string? DisplayName { get; } = displayName;
 
-    public override async Task ProcessAsync(IUpdateContext context, CancellationToken cancellationToken)
+    public override Task ProcessAsync(IUpdateContext context, CancellationToken cancellationToken)
     {
-        if (!targetTypes.Contains(context.Update.Type)) return;
+        return ProcessAsync(context.Update, cancellationToken);
+    }
 
-        switch (context.Update.Type)
+    public async Task ProcessAsync(Update update, CancellationToken cancellationToken)
+    {
+        if (!targetTypes.Contains(update.Type)) return;
+
+        switch (update.Type)
         {
-            case UpdateType.Message when context.Update is { Message: not null }:
+            case UpdateType.Message when update is { Message: not null }:
                 await Task.WhenAll(messageFlows.Select(flow =>
                     flow.ProcessAsync(
-                        new MessageContext(context.Update, context.Update.Message),
+                        new MessageContext(update, update.Message),
                         cancellationToken)));
                 break;
-            case UpdateType.CallbackQuery when context.Update is {CallbackQuery: not null}:
+            case UpdateType.CallbackQuery when update is { CallbackQuery: not null }:
                 await Task.WhenAll(callbackQueryFlows.Select(flow =>
                     flow.ProcessAsync(
-                        new CallbackQueryContext(context.Update, context.Update.CallbackQuery),
+                        new CallbackQueryContext(update, update.CallbackQuery),
                         cancellationToken)));
                 break;
-            case UpdateType.EditedMessage when context.Update is { EditedMessage: not null }:
+            case UpdateType.EditedMessage when update is { EditedMessage: not null }:
                 await Task.WhenAll(editedMessageFlows.Select(flow =>
                     flow.ProcessAsync(
-                        new EditedMessageContext(context.Update, context.Update.EditedMessage),
+                        new EditedMessageContext(update, update.EditedMessage),
                         cancellationToken)));
                 break;
             default:
                 return;
         }
 
-        await base.ProcessAsync(context, cancellationToken);
+        await base.ProcessAsync(new UpdateContext(update), cancellationToken);
     }
 }
 
-internal class UpdateFlow<TInjected>(
+internal sealed class UpdateFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<IUpdateContext, TInjected>> injectedTasks,
     ICollection<UpdateType> targetTypes,
-    IEnumerable<IMessageFlow> messageFlows,
-    IEnumerable<ICallbackQueryFlow> callbackQueryFlows,
-    IEnumerable<IEditedMessageFlow> editedMessageFlows,
+    IEnumerable<IFlow<IMessageContext>> messageFlows,
+    IEnumerable<IFlow<ICallbackQueryContext>> callbackQueryFlows,
+    IEnumerable<IFlow<IEditedMessageContext>> editedMessageFlows,
     IEnumerable<AsyncProcessingDelegate<IUpdateContext>> tasks,
-    string? displayName = null) : 
+    string? displayName = null) :
     UpdateFlow(
-        targetTypes, 
+        targetTypes,
         messageFlows,
         callbackQueryFlows,
         editedMessageFlows,
-        tasks, 
-        displayName), 
-    IUpdateFlow<TInjected>
+        tasks,
+        displayName)
 {
     protected override async Task ProcessInternalAsync(IUpdateContext context,
         CancellationToken cancellationToken)

@@ -6,4 +6,6 @@ internal abstract class Builder<TContext> :
 {
     public ICollection<AsyncProcessingDelegate<TContext>> Tasks { get; protected init; } =
         new List<AsyncProcessingDelegate<TContext>>();
+
+    public abstract IFlow<TContext> Build();
 }

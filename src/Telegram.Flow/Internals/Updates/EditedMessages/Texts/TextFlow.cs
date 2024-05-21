@@ -5,15 +5,13 @@ namespace Telegram.Flow.Internals.Updates.EditedMessages.Texts;
 
 internal class TextFlow(
     IEnumerable<AsyncProcessingDelegate<ITextContext>> tasks) :
-    Flow<ITextContext>(tasks),
-    ITextFlow;
+    Flow<ITextContext>(tasks);
 
-internal class TextFlow<TInjected>(
+internal sealed class TextFlow<TInjected>(
     TInjected injected,
     IEnumerable<AsyncProcessingDelegate<ITextContext, TInjected>> injectedTasks,
     IEnumerable<AsyncProcessingDelegate<ITextContext>> tasks) :
-    TextFlow(tasks),
-    ITextFlow<TInjected>
+    TextFlow(tasks)
 {
     protected override async Task ProcessInternalAsync(ITextContext context, CancellationToken cancellationToken)
     {

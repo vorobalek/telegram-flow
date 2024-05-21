@@ -8,7 +8,9 @@ using Telegram.Flow.Updates.Messages;
 
 namespace Telegram.Flow.Internals.Updates;
 
-internal class UpdateBuilder : Builder<IUpdateContext>, IUpdateBuilder
+internal class UpdateBuilder :
+    Builder<IUpdateContext>,
+    IUpdateBuilder
 {
     public string? DisplayName { get; set; }
 
@@ -22,11 +24,48 @@ internal class UpdateBuilder : Builder<IUpdateContext>, IUpdateBuilder
 
     public ICollection<IEditedMessageBuilder> EditedMessageBuilders { get; protected init; } =
         new List<IEditedMessageBuilder>();
+
+    public IUpdateBuilder<TInjected> WithInjection<TInjected>(TInjected injected)
+    {
+        return new UpdateBuilder<TInjected>(this, injected);
+    }
+
+    public override IUpdateFlow Build()
+    {
+        var (
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows
+            ) = BuildDependencies();
+
+        return new UpdateFlow(
+            TargetUpdateTypes,
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows,
+            Tasks,
+            DisplayName);
+    }
+
+    protected (
+        IEnumerable<IFlow<IMessageContext>> messageFlows,
+        IEnumerable<IFlow<ICallbackQueryContext>> callbackQueryFlows,
+        IEnumerable<IFlow<IEditedMessageContext>> editedMessageFlows)
+        BuildDependencies()
+    {
+        return (
+            MessageBuilders.Select(builder => builder.Build()),
+            CallbackQueryBuilders.Select(builder => builder.Build()),
+            EditedMessageBuilders.Select(builder => builder.Build())
+        );
+    }
 }
 
-internal class UpdateBuilder<TInjected> : UpdateBuilder, IUpdateBuilder<TInjected>
+internal sealed class UpdateBuilder<TInjected> :
+    UpdateBuilder,
+    IUpdateBuilder<TInjected>
 {
-    public UpdateBuilder(IUpdateBuilder prototypeBuilder)
+    public UpdateBuilder(IUpdateBuilder prototypeBuilder, TInjected injected)
     {
         DisplayName = prototypeBuilder.DisplayName;
         TargetUpdateTypes = prototypeBuilder.TargetUpdateTypes;
@@ -34,8 +73,30 @@ internal class UpdateBuilder<TInjected> : UpdateBuilder, IUpdateBuilder<TInjecte
         CallbackQueryBuilders = prototypeBuilder.CallbackQueryBuilders;
         EditedMessageBuilders = prototypeBuilder.EditedMessageBuilders;
         Tasks = prototypeBuilder.Tasks;
+        Injected = injected;
     }
+
+    public TInjected Injected { get; }
 
     public ICollection<AsyncProcessingDelegate<IUpdateContext, TInjected>> InjectedTasks { get; } =
         new List<AsyncProcessingDelegate<IUpdateContext, TInjected>>();
+
+    public override IUpdateFlow Build()
+    {
+        var (
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows
+            ) = BuildDependencies();
+
+        return new UpdateFlow<TInjected>(
+            Injected,
+            InjectedTasks,
+            TargetUpdateTypes,
+            messageFlows,
+            callbackQueryFlows,
+            editedMessageFlows,
+            Tasks,
+            DisplayName);
+    }
 }

@@ -1,7 +1,7 @@
 namespace Telegram.Flow.Infrastructure;
 
 public delegate Task AsyncProcessingDelegate<in TContext>(
-    TContext context, 
+    TContext context,
     CancellationToken cancellationToken)
     where TContext : IContext;
 

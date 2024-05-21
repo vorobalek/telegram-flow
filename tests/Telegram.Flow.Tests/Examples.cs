@@ -16,7 +16,7 @@ public class Examples
                     .ForBotCommand(
                         botCommand => botCommand
                             .ForExact("echo")
-                            .WithInjection<ITelegramBotClient>()
+                            .WithInjection<ITelegramBotClient>(new TelegramBotClient("asd"))
                             .WithAsyncProcessing(async (context, client, cancellationToken) =>
                             {
                                 await client
@@ -30,7 +30,7 @@ public class Examples
                             .ForExact("echoinline")
                             .ForPrefix("echoinline_")
                             .AllowInline()
-                            .WithInjection<ITelegramBotClient>()
+                            .WithInjection<ITelegramBotClient>(new TelegramBotClient("asd"))
                             .WithAsyncProcessing(async (context, client, cancellationToken) =>
                             {
                                 await client
@@ -39,7 +39,7 @@ public class Examples
                                         "echo hi",
                                         cancellationToken: cancellationToken);
                             }))
-                    .WithInjection<ITelegramBotClient>()
+                    .WithInjection<ITelegramBotClient>(new TelegramBotClient("asd"))
                     .WithAsyncProcessing(async (context, client, cancellationToken) =>
                     {
                         await client
@@ -48,7 +48,7 @@ public class Examples
                                 "echo hi",
                                 cancellationToken: cancellationToken);
                     }))
-                .WithInjection<ITelegramBotClient>()
+                .WithInjection<ITelegramBotClient>(new TelegramBotClient("asd"))
                 .WithAsyncProcessing(async (context, client, cancellationToken) =>
                 {
                     await client
@@ -62,7 +62,7 @@ public class Examples
                 processedUpdates.Add(context.Update);
                 return Task.CompletedTask;
             })
-            .WithInjection<ITelegramBotClient>()
+            .WithInjection<ITelegramBotClient>(new TelegramBotClient("asd"))
             .WithAsyncProcessing(async (context, client, cancellationToken) =>
             {
                 await client

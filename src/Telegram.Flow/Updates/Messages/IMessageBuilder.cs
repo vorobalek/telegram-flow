@@ -4,11 +4,14 @@ using Telegram.Flow.Updates.Messages.Texts;
 
 namespace Telegram.Flow.Updates.Messages;
 
-public interface IMessageBuilder : IBuilder<IMessageContext>
+public interface IMessageBuilder :
+    IBuilder<IMessageContext>
 {
-    ISet<MessageType> TargetMessageTypes { get; }
+    internal ISet<MessageType> TargetTypes { get; }
 
-    ICollection<ITextBuilder> TextBuilders { get; }
+    internal ICollection<ITextBuilder> TextBuilders { get; }
+
+    public IMessageBuilder<TInjected> WithInjection<TInjected>(TInjected injected);
 }
 
 public interface IMessageBuilder<TInjected> :

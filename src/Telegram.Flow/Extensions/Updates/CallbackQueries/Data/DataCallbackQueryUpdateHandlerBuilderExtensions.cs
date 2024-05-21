@@ -1,31 +1,26 @@
 using Telegram.Flow.Infrastructure;
-using Telegram.Flow.Internals.Updates.CallbackQueries.Data;
 using Telegram.Flow.Updates.CallbackQueries.Data;
 
 namespace Telegram.Flow.Extensions;
 
 public static class DataCallbackQueryUpdateHandlerBuilderExtensions
 {
-    public static IDataBuilder ForExact(
-        this IDataBuilder builder,
+    public static TBuilder ForExact<TBuilder>(
+        this TBuilder builder,
         string exactBotCommand)
+        where TBuilder : IDataBuilder
     {
         builder.TargetData.Add(exactBotCommand);
         return builder;
     }
 
-    public static IDataBuilder ForPrefix(
-        this IDataBuilder builder,
+    public static TBuilder ForPrefix<TBuilder>(
+        this TBuilder builder,
         string botCommandPrefix)
+        where TBuilder : IDataBuilder
     {
         builder.TargetDataPrefixes.Add(botCommandPrefix);
         return builder;
-    }
-    
-    public static IDataBuilder<TInjected> WithInjection<TInjected>(
-        this IDataBuilder builder)
-    {
-        return new DataBuilder<TInjected>(builder);
     }
 
     public static IDataBuilder WithAsyncProcessing(
@@ -34,7 +29,7 @@ public static class DataCallbackQueryUpdateHandlerBuilderExtensions
     {
         return builder.WithAsyncProcessingInternal(func);
     }
-    
+
     public static IDataBuilder<TInjected> WithAsyncProcessing<TInjected>(
         this IDataBuilder<TInjected> builder,
         AsyncProcessingDelegate<IDataContext, TInjected> func)
