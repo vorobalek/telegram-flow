@@ -5,5 +5,5 @@ namespace Telegram.Flow;
 
 public static class TelegramFlow
 {
-    public static IUpdateHandlerBuilder New => new UpdateHandlerBuilder();
+    public static IUpdateBuilder New => new UpdateBuilder();
 }

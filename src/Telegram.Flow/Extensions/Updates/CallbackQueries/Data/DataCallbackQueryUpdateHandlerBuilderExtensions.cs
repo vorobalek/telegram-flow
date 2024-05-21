@@ -1,43 +1,38 @@
 using Telegram.Flow.Infrastructure;
-using Telegram.Flow.Internals.Updates.CallbackQueries.Data;
 using Telegram.Flow.Updates.CallbackQueries.Data;
 
 namespace Telegram.Flow.Extensions;
 
 public static class DataCallbackQueryUpdateHandlerBuilderExtensions
 {
-    public static IDataCallbackQueryUpdateHandlerBuilder ForExact(
-        this IDataCallbackQueryUpdateHandlerBuilder builder,
+    public static TBuilder ForExact<TBuilder>(
+        this TBuilder builder,
         string exactBotCommand)
+        where TBuilder : IDataBuilder
     {
         builder.TargetData.Add(exactBotCommand);
         return builder;
     }
 
-    public static IDataCallbackQueryUpdateHandlerBuilder ForPrefix(
-        this IDataCallbackQueryUpdateHandlerBuilder builder,
+    public static TBuilder ForPrefix<TBuilder>(
+        this TBuilder builder,
         string botCommandPrefix)
+        where TBuilder : IDataBuilder
     {
         builder.TargetDataPrefixes.Add(botCommandPrefix);
         return builder;
     }
-    
-    public static IDataCallbackQueryUpdateHandlerBuilder<TInjected> WithInjection<TInjected>(
-        this IDataCallbackQueryUpdateHandlerBuilder builder)
-    {
-        return new DataCallbackQueryUpdateHandlerBuilder<TInjected>(builder);
-    }
 
-    public static IDataCallbackQueryUpdateHandlerBuilder WithAsyncProcessing(
-        this IDataCallbackQueryUpdateHandlerBuilder builder,
-        AsyncProcessingDelegate<IDataCallbackQueryUpdateHandlerContext> func)
+    public static IDataBuilder WithAsyncProcessing(
+        this IDataBuilder builder,
+        AsyncProcessingDelegate<IDataContext> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
-    
-    public static IDataCallbackQueryUpdateHandlerBuilder<TInjected> WithAsyncProcessing<TInjected>(
-        this IDataCallbackQueryUpdateHandlerBuilder<TInjected> builder,
-        AsyncProcessingDelegate<IDataCallbackQueryUpdateHandlerContext, TInjected> func)
+
+    public static IDataBuilder<TInjected> WithAsyncProcessing<TInjected>(
+        this IDataBuilder<TInjected> builder,
+        AsyncProcessingDelegate<IDataContext, TInjected> func)
     {
         return builder.WithAsyncProcessingInternal(func);
     }
