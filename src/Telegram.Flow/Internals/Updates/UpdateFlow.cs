@@ -32,30 +32,31 @@ internal class UpdateFlow(
 
     public async Task ProcessAsync(Update update, CancellationToken cancellationToken)
     {
-        if (!targetTypes.Contains(update.Type)) return;
-
-        switch (update.Type)
+        if (targetTypes.Contains(update.Type))
         {
-            case UpdateType.Message when update is { Message: not null }:
-                await Task.WhenAll(messageFlows.Select(flow =>
-                    flow.ProcessAsync(
-                        new MessageContext(update, update.Message),
-                        cancellationToken)));
-                break;
-            case UpdateType.CallbackQuery when update is { CallbackQuery: not null }:
-                await Task.WhenAll(callbackQueryFlows.Select(flow =>
-                    flow.ProcessAsync(
-                        new CallbackQueryContext(update, update.CallbackQuery),
-                        cancellationToken)));
-                break;
-            case UpdateType.EditedMessage when update is { EditedMessage: not null }:
-                await Task.WhenAll(editedMessageFlows.Select(flow =>
-                    flow.ProcessAsync(
-                        new EditedMessageContext(update, update.EditedMessage),
-                        cancellationToken)));
-                break;
-            default:
-                return;
+            switch (update.Type)
+            {
+                case UpdateType.Message when update is { Message: not null }:
+                    await Task.WhenAll(messageFlows.Select(flow =>
+                        flow.ProcessAsync(
+                            new MessageContext(update, update.Message),
+                            cancellationToken)));
+                    break;
+                case UpdateType.CallbackQuery when update is { CallbackQuery: not null }:
+                    await Task.WhenAll(callbackQueryFlows.Select(flow =>
+                        flow.ProcessAsync(
+                            new CallbackQueryContext(update, update.CallbackQuery),
+                            cancellationToken)));
+                    break;
+                case UpdateType.EditedMessage when update is { EditedMessage: not null }:
+                    await Task.WhenAll(editedMessageFlows.Select(flow =>
+                        flow.ProcessAsync(
+                            new EditedMessageContext(update, update.EditedMessage),
+                            cancellationToken)));
+                    break;
+                default:
+                    return;
+            }
         }
 
         await base.ProcessAsync(new UpdateContext(update), cancellationToken);

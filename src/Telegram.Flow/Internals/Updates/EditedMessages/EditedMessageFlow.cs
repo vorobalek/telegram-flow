@@ -14,21 +14,23 @@ internal class EditedMessageFlow(
 {
     public override async Task ProcessAsync(IEditedMessageContext context, CancellationToken cancellationToken)
     {
-        if (!targetTypes.Contains(context.EditedMessage.Type)) return;
-
-        switch (context.EditedMessage.Type)
+        if (targetTypes.Contains(context.EditedMessage.Type))
         {
-            case MessageType.Text when context.EditedMessage is { Text: not null }:
-                await Task.WhenAll(textFlows.Select(flow =>
-                    flow.ProcessAsync(
-                        new TextContext(
-                            context.Update,
-                            context.EditedMessage,
-                            context.EditedMessage.Text),
-                        cancellationToken)));
-                break;
-            default:
-                return;
+
+            switch (context.EditedMessage.Type)
+            {
+                case MessageType.Text when context.EditedMessage is { Text: not null }:
+                    await Task.WhenAll(textFlows.Select(flow =>
+                        flow.ProcessAsync(
+                            new TextContext(
+                                context.Update,
+                                context.EditedMessage,
+                                context.EditedMessage.Text),
+                            cancellationToken)));
+                    break;
+                default:
+                    return;
+            }
         }
 
         await base.ProcessAsync(context, cancellationToken);

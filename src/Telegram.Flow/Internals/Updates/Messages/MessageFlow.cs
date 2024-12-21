@@ -14,21 +14,22 @@ internal class MessageFlow(
 {
     public override async Task ProcessAsync(IMessageContext context, CancellationToken cancellationToken)
     {
-        if (!targetTypes.Contains(context.Message.Type)) return;
-
-        switch (context.Message.Type)
+        if (targetTypes.Contains(context.Message.Type))
         {
-            case MessageType.Text when context.Message is { Text: not null }:
-                await Task.WhenAll(textFlows.Select(flow =>
-                    flow.ProcessAsync(
-                        new TextContext(
-                            context.Update,
-                            context.Message,
-                            context.Message.Text),
-                        cancellationToken)));
-                break;
-            default:
-                return;
+            switch (context.Message.Type)
+            {
+                case MessageType.Text when context.Message is { Text: not null }:
+                    await Task.WhenAll(textFlows.Select(flow =>
+                        flow.ProcessAsync(
+                            new TextContext(
+                                context.Update,
+                                context.Message,
+                                context.Message.Text),
+                            cancellationToken)));
+                    break;
+                default:
+                    return;
+            }
         }
 
         await base.ProcessAsync(context, cancellationToken);
