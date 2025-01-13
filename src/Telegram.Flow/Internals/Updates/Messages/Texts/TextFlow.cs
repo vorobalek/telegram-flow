@@ -16,7 +16,7 @@ internal class TextFlow(
         if (context.Message.Entities is { } entities)
         {
             var commands = entities.Where(entity => entity.Type is MessageEntityType.BotCommand).ToArray();
-            for (var index = 0; index < entities.Length; ++index)
+            for (var index = 0; index < commands.Length; ++index)
             {
                 var startCommandIndex = commands[index].Offset + 1;
                 var endCommandIndex = commands[index].Offset + commands[index].Length;
